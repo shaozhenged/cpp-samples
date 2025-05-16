@@ -10,11 +10,15 @@ if(WIN32)
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
         # 64-bit
         message(STATUS "Configuring for 64-bit Windows")
-        set(PLUX_LIBS ${CMAKE_CURRENT_SOURCE_DIR}/lib/plux64.lib)
+        set(PLUX_LIBS ${CMAKE_CURRENT_SOURCE_DIR}/lib/plux64.lib
+                      ${CMAKE_CURRENT_SOURCE_DIR}/LibFT4222-64.dll
+                      ${CMAKE_CURRENT_SOURCE_DIR}/LibFT4222AB-64.dll)
     else()
         # 32-bit
         message(STATUS "Configuring for 32-bit Windows")
-        set(PLUX_LIBS ${CMAKE_CURRENT_SOURCE_DIR}/lib/plux.lib)
+        set(PLUX_LIBS ${CMAKE_CURRENT_SOURCE_DIR}/lib/plux.lib
+                      ${CMAKE_CURRENT_SOURCE_DIR}/LibFT4222.dll
+                      ${CMAKE_CURRENT_SOURCE_DIR}/LibFT4222AB.dll)
     endif()
 elseif(APPLE)
     # macOS系统
@@ -48,18 +52,6 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
 # 链接库
 target_link_libraries(${PROJECT_NAME} PRIVATE ${PLUX_LIBS})
-
-# 将DLL文件复制到生成目录（仅Windows）
-if(WIN32)
-    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_CURRENT_SOURCE_DIR}/LibFT4222.dll
-            ${CMAKE_CURRENT_SOURCE_DIR}/LibFT4222-64.dll
-            ${CMAKE_CURRENT_SOURCE_DIR}/LibFT4222AB.dll
-            ${CMAKE_CURRENT_SOURCE_DIR}/LibFT4222AB-64.dll
-            $<TARGET_FILE_DIR:${PROJECT_NAME}>
-    )
-endif()
 
 # 设置属性使其可以在Qt Creator中使用
 set(CMAKE_AUTOUIC ON)
